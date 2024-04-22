@@ -40,6 +40,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
+    @Column(nullable = true)
+    private String alias;
+
     @Transient
     private String jwt;
 
