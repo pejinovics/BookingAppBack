@@ -31,7 +31,7 @@ public class AnalyticsController {
     @Autowired
     private IAnalyticsService analyticsService;
 
-    @PreAuthorize("hasRole('HOST')")
+    @PreAuthorize("hasRole('HOST_ANALYTICS_READ')")
     @GetMapping(value = "/annualAnalytics/{year}/{accommodationId}/{hostUserId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAnnualAnalytics(@PathVariable int year, @IdentityConstraint @PathVariable Long accommodationId, @IdentityConstraint @PathVariable Long hostUserId){
         AnnualAnalytics annualAnalytics = analyticsService.getAnnualAnalytics(year, accommodationId, hostUserId);
@@ -39,7 +39,7 @@ public class AnalyticsController {
         return new ResponseEntity<AnnualAnalytics>(annualAnalytics, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('HOST')")
+    @PreAuthorize("hasRole('HOST_ANALYTICS_READ')")
     @GetMapping(value = "/allAccommodations/{hostUserId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAnalyticsForAll(@NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  @PathParam("startDate") LocalDate startDate,
                                                 @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @PathParam("endDate") LocalDate endDate,

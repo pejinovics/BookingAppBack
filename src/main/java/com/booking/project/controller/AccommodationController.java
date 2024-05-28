@@ -62,7 +62,7 @@ public class AccommodationController {
         return new ResponseEntity<AccommodationDTO>(accommodationDTO, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN_ACCOMMODATION_STATUS_UPDATE')")
     @GetMapping(value = "/adminApproving", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAccommodationsForApproving() throws IOException {
         Collection<AccommodationCardDTO> accommodationCards = accommodationService.findApprovalPendingAccommodations();
@@ -79,7 +79,7 @@ public class AccommodationController {
         return new ResponseEntity<Collection<AccommodationCardDTO>>(accommodationCards, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('HOST')")
+    @PreAuthorize("hasRole('HOST_ACCOMMODATION_WRITE')")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createAccommodation(@RequestBody AccommodationDTO accommodationDTO) throws Exception {
         Accommodation accommodationNew = new Accommodation(accommodationDTO);
@@ -89,13 +89,13 @@ public class AccommodationController {
         AccommodationDTO newAccommodationDTO = new AccommodationDTO(savedAccommodation);
         return new ResponseEntity<AccommodationDTO>(newAccommodationDTO, HttpStatus.CREATED);
     }
-    @PreAuthorize("hasRole('HOST')")
+    @PreAuthorize("hasRole('HOST_ACCOMMODATION_DELETE')")
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Accommodation> deleteAccommodation(@IdentityConstraint @PathVariable("id") Long id){
         accommodationService.deleteById(id);
         return new ResponseEntity<Accommodation>(HttpStatus.NO_CONTENT);
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN_ACCOMMODATION_STATUS_UPDATE')")
     @PutMapping(value ="/{id}/approvalStatus", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> changeAccommodationAvailableStatus(@IdentityConstraint @PathVariable Long id,
                                                                 @RequestBody AccommodationApprovalStatusDTO approvalStatus) throws Exception {
@@ -106,7 +106,7 @@ public class AccommodationController {
         return new ResponseEntity<AccommodationDTO>(accommodationDTO, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('GUEST')")
+    @PreAuthorize("hasRole('GUEST_CALENDAR_READ')")
     @GetMapping(value = "/{id}/availableDates", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAvailableDates(@IdentityConstraint @PathVariable("id") Long id) throws IOException {
         List<LocalDate> availableDates = accommodationService.getAvailableDates(id);
@@ -115,13 +115,13 @@ public class AccommodationController {
     }
 
 
-    @PreAuthorize("hasRole('HOST')")
+    @PreAuthorize("hasRole('HOST_ACCOMMODATION_READ')")
     @GetMapping(value = "/host/{id_host}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getHostAccommodations(@IdentityConstraint @PathVariable("id_host") Long id) throws IOException {
         Collection<AccommodationCardDTO> accommodations = accommodationService.findAccomodationsByHostId(id);
         return new ResponseEntity<Collection<AccommodationCardDTO>>(accommodations, HttpStatus.OK);
     }
-    @PreAuthorize("hasRole('HOST')")
+    @PreAuthorize("hasRole('HOST_ACCOMMODATION_UPDATE')")
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateAccommodation(@RequestBody AccommodationDTO accommodationDTO,
                                                  @IdentityConstraint @PathVariable Long id) throws Exception{
@@ -147,7 +147,7 @@ public class AccommodationController {
 
         return new ResponseEntity<Collection<AccommodationCardDTO>>(accommodations, HttpStatus.OK);
     }
-    @PreAuthorize("hasRole('HOST')")
+    @PreAuthorize("hasRole('HOST_RESERVATION_UPDATE')")
     @PutMapping(value ="/{id}/reservationMethod/{reservationMethod}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> changeAccommodationReservationMethod(@IdentityConstraint @PathVariable Long id, @PathVariable ReservationMethod reservationMethod) throws Exception {
         AccommodationDTO accommodationDTO = accommodationService.changeAccommodationReservationMethod(id,reservationMethod);
@@ -161,7 +161,7 @@ public class AccommodationController {
         Collection<Double> minMax = accommodationService.getMinMaxPrice();
         return new ResponseEntity<Collection<Double>>(minMax, HttpStatus.OK);
     }
-    @PreAuthorize("hasRole('HOST')")
+    @PreAuthorize("hasRole('HOST_ACCOMMODATION_PRICE_LIST_WRITE')")
     @PostMapping(value = "/priceList/{accommodationId}", consumes = "application/json")
 
     public ResponseEntity<Integer> addPriceList(@IdentityConstraint @PathVariable Long accommodationId,
@@ -176,7 +176,7 @@ public class AccommodationController {
 
         return new ResponseEntity<>(accommodation.get().getPrices().size(), HttpStatus.OK);
     }
-    @PreAuthorize("hasRole('HOST')")
+    @PreAuthorize("hasRole('HOST_ACCOMMODATION_PRICE_LIST_UPDATE')")
     @PutMapping(value = "/priceList/{accommodationId}", consumes = "application/json")
     public ResponseEntity<Integer> updatePriceList(@IdentityConstraint @PathVariable Long accommodationId,
                                                    @RequestBody List<IntervalPriceDTO> dtos) {
@@ -190,7 +190,7 @@ public class AccommodationController {
 
         return new ResponseEntity<>(length, HttpStatus.OK);
     }
-    @PreAuthorize("hasRole('HOST')")
+    @PreAuthorize("hasRole('HOST_ACCOMMODATION_PRICE_LIST_READ')")
     @GetMapping(value = "priceList/{id}")
     public ResponseEntity<?> getPriceList(@IdentityConstraint @PathVariable Long id) {
 
@@ -198,7 +198,7 @@ public class AccommodationController {
         return new ResponseEntity<>(accommodation.getPrices(), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('HOST')")
+    @PreAuthorize("hasRole('HOST_ACCOMMODATION_PRICE_LIST_READ')")
     @GetMapping(value = "intervalPrices/{id}")
     public ResponseEntity<List<IntervalPriceDTO>> getIntervalPrices(@IdentityConstraint @PathVariable Long id) {
         Optional<Accommodation> accommodation = accommodationService.findById(id);
@@ -208,7 +208,7 @@ public class AccommodationController {
         return new ResponseEntity<>(priceListService.getIntervalPrices(id), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('GUEST')")
+    @PreAuthorize("hasRole('GUEST_ACCOMMODATION_READ')")
     @GetMapping(value = "/guest/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getGuestAccommodations(@IdentityConstraint @PathVariable("id") Long id){
         List<AccommodationDTO> accommodationDTOS = accommodationService.getGuestAccommodations(id);
@@ -217,7 +217,7 @@ public class AccommodationController {
         return new ResponseEntity<>(accommodationDTOS, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('GUEST')")
+    @PreAuthorize("hasRole('GUEST_ACCOMMODATION_READ')")
     @GetMapping(value = "/guest/comment/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getGuestAccommodationsForComment(@IdentityConstraint @PathVariable("id") Long id) throws IOException {
         List<AccommodationDTO> accommodationDTOS = accommodationService.getGuestAccommodationsForComment(id);

@@ -37,25 +37,25 @@ public class NotificationForHostController {
         NotificationForHost savedNotificationForHost = notificationForHostService.create(createNotificationForHostDTO);
         return new ResponseEntity<NotificationForHost>(savedNotificationForHost, HttpStatus.CREATED);
     }
-    @PreAuthorize("hasRole('HOST')")
+    @PreAuthorize("hasRole('HOST_NOTIFICATION_READ')")
     @GetMapping(value = "/host/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Collection<NotificationForHostDTO>> getNotificationsForHost(@IdentityConstraint  @PathVariable Long id){
         Collection<NotificationForHostDTO> notificationForHost = notificationForHostService.findByHost(id);
         return new ResponseEntity<Collection<NotificationForHostDTO>>(notificationForHost, HttpStatus.OK);
     }
-    @PreAuthorize("hasRole('HOST')")
+    @PreAuthorize("hasRole('HOST_NOTIFICATION_UPDATE')")
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> markNotificationAsRead(@IdentityConstraint @PathVariable("id") Long id){
         NotificationForHostDTO notificationForHostDTO = notificationForHostService.markAsRead(id);
         return new ResponseEntity<NotificationForHostDTO>(notificationForHostDTO,HttpStatus.OK);
     }
-    @PreAuthorize("hasRole('HOST')")
+    @PreAuthorize("hasRole('HOST_NOTIFICATION_STATUS_READ')")
     @GetMapping(value="/hostNotificationStatus/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getHostNotificationsStatus(@IdentityConstraint @PathVariable Long id){
         Collection<NotificationTypeStatus> notificationsTypeStatus = notificationTypeStatusService.findByUser(id);
         return new ResponseEntity<Collection<NotificationTypeStatus>>(notificationsTypeStatus, HttpStatus.OK);
     }
-    @PreAuthorize("hasRole('HOST')")
+    @PreAuthorize("hasRole('HOST_NOTIFICATION_STATUS_UPDATE')")
     @PutMapping(value="/changeNotificationStatus", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> changeHostNotificationStatus(@Valid @RequestBody NotificationTypeStatusDTO notificationTypeStatusDTO){
         notificationTypeStatusService.changeNotificationStatus(notificationTypeStatusDTO);
