@@ -20,7 +20,7 @@ import lombok.Setter;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -68,6 +68,7 @@ public class User {
         this.password = userCredentialsDTO.getPassword();
     }
     public User(UserInfoDTO userInfoDTO){
+        this.id = userInfoDTO.getId();
         this.email = userInfoDTO.getEmail();
         this.password = userInfoDTO.getPassword();
         this.userType = userInfoDTO.getUserType();

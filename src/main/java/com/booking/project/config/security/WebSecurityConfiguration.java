@@ -30,6 +30,7 @@ public class WebSecurityConfiguration {
         http.csrf(AbstractHttpConfigurer::disable).authorizeRequests() // csrf->disabled, pošto nam JWT odrađuje zaštitu od CSRF napada          statički html i login mogu svi da pozovu
                 .requestMatchers("/*").permitAll().requestMatchers("/api/auth/login").permitAll()
                 .requestMatchers("/api/register**").permitAll()
+                .requestMatchers("/api/register/userExists/{email}").permitAll()
                 .requestMatchers("api/register/confirm**").permitAll()
                 .requestMatchers("/api/accommodations/cards/filter**").permitAll()
                 .requestMatchers("/api/accommodations/minMaxPrice").permitAll()
