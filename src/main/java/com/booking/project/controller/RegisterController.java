@@ -18,13 +18,13 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/api/register")
 @Validated
 public class RegisterController {
 
-    @Autowired
-    private UserDetailsService userDetailsService;
     @Autowired
     private UserService userService;
     @Autowired
@@ -42,11 +42,13 @@ public class RegisterController {
         if(savedUser.getUserType().equals(UserType.GUEST)){
             Guest guest = new Guest(userInfoDTO);
             guest.setUser(savedUser);
+            guest.setId(savedUser.getId());
             guestService.save(guest);
 
         }else if(savedUser.getUserType().equals(UserType.HOST)){
             Host host = new Host(userInfoDTO);
             host.setUser(savedUser);
+            host.setId(savedUser.getId());
             hostService.save(host);
         }
 
@@ -54,9 +56,18 @@ public class RegisterController {
 
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
+    @GetMapping(path = "/userExists/{email}")
+    public Boolean confirm(@PathVariable("email") String email){
 
-    @GetMapping(path = "confirm")
-    public String confirm(@RequestParam("token") String token){
-        return userService.confirmToken(token);
+        Optional<User> user = userService.findByEmail(email);
+        if (!user.isEmpty()) {
+            return true;
+        }else {
+            return false;
+        }
     }
+//    @GetMapping(path = "confirm")
+//    public String confirm(@RequestParam("token") String token){
+//        return userService.confirmToken(token);
+//    }
 }

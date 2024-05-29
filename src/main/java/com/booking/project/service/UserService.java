@@ -52,38 +52,39 @@ public class UserService implements IUserService {
         return repository.findByEmail(email);
     }
     public User registerUser(UserInfoDTO userInfoDTO){
-        Optional<User> userExist = repository.findByEmail(userInfoDTO.getEmail());
+//        Optional<User> userExist = repository.findByEmail(userInfoDTO.getEmail());
 
 
-        if(!userExist.isEmpty()){
-            ConfirmationToken token = confirmationTokenService.findTokenByUser(userExist.get().getId());
-
-            if(token.getExpiresAt().isAfter(LocalDateTime.now())) return null;
-
-            confirmationTokenService.deleteById(token.getId());
-
-            if(userExist.get().getUserType().equals(UserType.GUEST)){
-                Optional<Guest> guest = guestService.findByUser(userExist.get().getId());
-                guestService.deleteById(guest.get().getId());
-            }else if(userExist.get().getUserType().equals(UserType.HOST)){
-                Host host = hostService.findByUser(userExist.get().getId());
-                hostService.deleteById(host.getId());
-            }
-            repository.deleteById(userExist.get().getId());
-        }
+//        if(!userExist.isEmpty()){
+//            ConfirmationToken token = confirmationTokenService.findTokenByUser(userExist.get().getId());
+//
+//            if(token.getExpiresAt().isAfter(LocalDateTime.now())) return null;
+//
+//            confirmationTokenService.deleteById(token.getId());
+//
+//            if(userExist.get().getUserType().equals(UserType.GUEST)){
+//                Optional<Guest> guest = guestService.findByUser(userExist.get().getId());
+//                guestService.deleteById(guest.get().getId());
+//            }else if(userExist.get().getUserType().equals(UserType.HOST)){
+//                Host host = hostService.findByUser(userExist.get().getId());
+//                hostService.deleteById(host.getId());
+//            }
+//            repository.deleteById(userExist.get().getId());
+//        }
 
         String passwordEncoded = bCryptPasswordEncoder.encode(userInfoDTO.getPassword());
         User user = new User(userInfoDTO);
         user.setPassword(passwordEncoded);
+        user.setStatus(UserStatus.ACTIVE);
         repository.save(user);
+//
+//        String token = UUID.randomUUID().toString();
+//        ConfirmationToken confirmationToken = new ConfirmationToken(token,LocalDateTime.now(),LocalDateTime.now().plusHours(24),user);
+//        confirmationTokenService.saveConfirmationToken(confirmationToken);
 
-        String token = UUID.randomUUID().toString();
-        ConfirmationToken confirmationToken = new ConfirmationToken(token,LocalDateTime.now(),LocalDateTime.now().plusHours(24),user);
-        confirmationTokenService.saveConfirmationToken(confirmationToken);
+//        String link = "http://localhost:8080/api/register/confirm?token=" + token;
 
-        String link = "http://localhost:8080/api/register/confirm?token=" + token;
-
-        emailSender.send(user.getEmail(),emailBuilder.buildEmail(userInfoDTO.getName(),link));
+//        emailSender.send(user.getEmail(),emailBuilder.buildEmail(userInfoDTO.getName(),link));
 
         return user;
     }
