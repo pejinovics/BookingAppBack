@@ -22,7 +22,7 @@ public class GuestController {
 
     @Autowired
     private IGuestService guestService;
-    @PreAuthorize("hasRole('GUEST')")
+    @PreAuthorize("hasRole('GUEST_FAVORITE_ACCOMMODATION_READ')")
     @GetMapping(value = "/{id}/favourites", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Collection<AccommodationCardDTO>> getFavouritesAccommodations(@IdentityConstraint @PathVariable("id") Long id)
             throws IOException {
@@ -32,7 +32,7 @@ public class GuestController {
     }
 
 
-    @PreAuthorize(("hasRole('GUEST')"))
+    @PreAuthorize(("hasRole('GUEST_FAVORITE_ACCOMMODATION_WRITE')"))
     @PostMapping(value = "/favourites/{guestUserId}/{accId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addFavourite(@IdentityConstraint  @PathVariable("guestUserId") Long guestUserId,
                                           @IdentityConstraint @PathVariable("accId") Long accId) throws Exception {
@@ -43,7 +43,7 @@ public class GuestController {
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
-    @PreAuthorize(("hasRole('GUEST')"))
+    @PreAuthorize(("hasRole('GUEST_FAVORITE_READ')"))
     @GetMapping(value = "/isFavourite/{guestUserId}/{accId}")
     public ResponseEntity<?> isFavourite(@IdentityConstraint @PathVariable("guestUserId") Long guestUserId,
                                          @IdentityConstraint @PathVariable("accId") Long accId) throws Exception {
@@ -54,7 +54,7 @@ public class GuestController {
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
-    @PreAuthorize(("hasRole('GUEST')"))
+    @PreAuthorize(("hasRole('GUEST_FAVORITE_ACCOMMODATION_DELETE')"))
     @DeleteMapping(value = "/favourites/{guestUserId}/{accId}")
     public ResponseEntity<?> removeFavourite(@IdentityConstraint @PathVariable("guestUserId") Long guestUserId,
                                              @IdentityConstraint @PathVariable("accId") Long accId) throws Exception {

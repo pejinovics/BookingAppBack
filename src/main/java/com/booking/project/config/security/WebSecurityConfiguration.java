@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -21,14 +22,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableGlobalMethodSecurity(prePostEnabled = true)  // <-- Obavezno za @PreAuthorize
 public class WebSecurityConfiguration {
 
-    @Autowired
-    private JwtRequestFilter jwtRequestFilter;
+//    @Autowired
+//    private JwtRequestFilter jwtRequestFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests() // csrf->disabled, pošto nam JWT odrađuje zaštitu od CSRF napada          statički html i login mogu svi da pozovu
+        http.csrf(AbstractHttpConfigurer::disable).authorizeRequests() // csrf->disabled, pošto nam JWT odrađuje zaštitu od CSRF napada          statički html i login mogu svi da pozovu
                 .requestMatchers("/*").permitAll().requestMatchers("/api/auth/login").permitAll()
                 .requestMatchers("/api/register**").permitAll()
+                .requestMatchers("/api/register/userExists/{email}").permitAll()
                 .requestMatchers("api/register/confirm**").permitAll()
                 .requestMatchers("/api/accommodations/cards/filter**").permitAll()
                 .requestMatchers("/api/accommodations/minMaxPrice").permitAll()
@@ -41,8 +43,8 @@ public class WebSecurityConfiguration {
                 .and()
                 .cors()
                 .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // ne koristimo HttpSession i kukije
-        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class); // JWT procesiramo pre autentikacije
+                .oauth2ResourceServer(auth ->
+                        auth.jwt(token -> token.jwtAuthenticationConverter(new KeycloakJwtAuthenticationConverter())));
 
         return http.build();
     }

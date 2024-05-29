@@ -24,7 +24,7 @@ public class CommentAboutHostController {
 
     @Autowired
     private ICommentAboutHostService commentAboutHostService;
-    @PreAuthorize("hasRole('GUEST')")
+    @PreAuthorize("hasRole('GUEST_COMMENT_WRITE')")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createCommentAboutHost
             (@RequestBody CreateCommentAboutHostDTO createCommentAboutHostDTO) throws Exception {
@@ -49,13 +49,13 @@ public class CommentAboutHostController {
         }
         return new ResponseEntity<Collection<CommentAboutHostDTO>>(comments, HttpStatus.OK);
     }
-    @PreAuthorize("hasRole('ADMIN') OR hasRole('GUEST')")
+    @PreAuthorize("hasRole('ADMIN_COMMENT_DELETE') OR hasRole('GUEST_COMMENT_DELETE')")
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<CommentAboutHost> deleteCommentAboutHost(@IdentityConstraint @PathVariable("id") Long id){
         commentAboutHostService.deleteById(id);
         return new ResponseEntity<CommentAboutHost>(HttpStatus.NO_CONTENT);
     }
-    @PreAuthorize("hasRole('HOST')")
+    @PreAuthorize("hasRole('HOST_COMMENT_REPORT_WRITE')")
     @PutMapping(value = "/{id}/report/{isReported}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> reportCommentAboutHost(@IdentityConstraint @PathVariable Long id,
                                                     @PathVariable boolean isReported) throws Exception{
@@ -67,7 +67,7 @@ public class CommentAboutHostController {
 
         return new ResponseEntity<CommentAboutHostDTO>(new CommentAboutHostDTO(commentAboutHost), HttpStatus.CREATED);
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN_COMMENT_STATUS_UPDATE')")
     @PutMapping(value = "/{id}/approve/{isApproved}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> approveCommentAboutHost(@IdentityConstraint @PathVariable Long id,
                                                      @PathVariable boolean isApproved) throws Exception{
@@ -79,7 +79,7 @@ public class CommentAboutHostController {
 
         return new ResponseEntity<CommentAboutHostDTO>(new CommentAboutHostDTO(commentAboutHost), HttpStatus.CREATED);
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN_REPORT_READ')")
     @GetMapping(value = "/reported",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Collection<CommentAboutHostDTO>> getReported(){
         Collection<CommentAboutHostDTO> comments = commentAboutHostService.findAllReported();
@@ -89,7 +89,7 @@ public class CommentAboutHostController {
         return new ResponseEntity<Collection<CommentAboutHostDTO>>(comments, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('GUEST')")
+    @PreAuthorize("hasRole('GUEST_COMMENT_READ')")
     @GetMapping(value = "/guest/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Collection<CommentAboutHostDTO>> getCommentsAboutHostForGuest(@IdentityConstraint @PathVariable Long id){
         Collection<CommentAboutHostDTO> comments = commentAboutHostService.findByGuest(id);
@@ -99,7 +99,7 @@ public class CommentAboutHostController {
         return new ResponseEntity<Collection<CommentAboutHostDTO>>(comments, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('HOST')")
+    @PreAuthorize("hasRole('HOST_REPORT_MESSAGE_UPDATE')")
     @PutMapping(value = "/reportMessage/{id}")
     public ResponseEntity<?> setReportMessage(@IdentityConstraint @PathVariable Long id, @RequestBody String message) throws Exception{
         CommentAboutHost commentAboutHost = commentAboutHostService.setReportMessage(id, message);

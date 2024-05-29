@@ -18,19 +18,19 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+//@RestController
 @CrossOrigin(origins = "http://localhost:4200")
 @Validated
-@RequestMapping("/api/auth")
+//@RequestMapping("/api/auth")
 public class AuthenticationController {
 
-    @Autowired
+//    @Autowired
     private AuthenticationManager authenticationManager;
 
-    @Autowired
+//    @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-    @Autowired
+//    @Autowired
     private UserDetailsService userDetailsService;
 
     @PostMapping(value = "/login")
